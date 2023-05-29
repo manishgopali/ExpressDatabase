@@ -4,5 +4,12 @@
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
-    "cSpell.words": ["codepaths", "tabwidth", "todos"]
+    "cSpell.words": [
+        "codepaths",
+        "Gopali",
+        "Goplai",
+        "Manish",
+        "tabwidth",
+        "todos"
+    ]
 }

@@ -2,35 +2,22 @@ import { config } from 'dotenv'
 import cors from 'cors'
 import express, { Request, Response } from 'express'
 import crypto from 'crypto'
+import userRoutes from '../routers/user.route'
+import routes from '../routers/index'
+import * as ErrorMiddlewares from '../middleware/errors.middleware'
 
 config()
 
 const aVAr = express()
 
+console.log('Hello this is me')
+
 aVAr.use(express.json())
 aVAr.use(express.urlencoded({ extended: true }))
 aVAr.use(cors())
+aVAr.use('/api', routes)
 
-interface Todo {
-    id: string
-    name: string
-    active: boolean
-}
-
-// interface TodoRequestBody {
-//     name: string
-//     active: boolean
-// }
-
-const users: Todo[] = [
-    { id: crypto.randomUUID(), name: 'just a thing', active: true },
-]
-
-aVAr.get('/users', (req: Request, res: Response) => {
-    if (req.query.active) {
-        res.send(users.filter((todo) => todo.active))
-    }
-    res.send(users)
-})
+aVAr.use(ErrorMiddlewares.methodNotAllowed)
+aVAr.use(ErrorMiddlewares.genericErrorHandler)
 
 export default aVAr
