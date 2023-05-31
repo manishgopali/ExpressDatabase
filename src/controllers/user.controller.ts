@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import * as userService from '../services/user.service'
-
+import HttpStatus from 'http-status-codes'
+// import { loginUser } from '../services/login.service'
 export const getUser = async (
     req: Request,
     res: Response,
@@ -20,8 +21,8 @@ export const createUser = async (
     next: NextFunction
 ) => {
     try {
-        await userService.createUser(req.body)
-        res.send('data inserted successfully')
+        const createdUser = await userService.createUser(req.body)
+        res.status(201).send(createdUser)
     } catch (e) {
         next(e)
     }
@@ -33,8 +34,38 @@ export const deleteUser = async (
     next: NextFunction
 ) => {
     try {
-        await userService.deleteUser(req.params)
-        res.send('data deleted successfully')
+       const deletedUser= await userService.deleteUser(req.params)
+       res.status(200).send(deletedUser)
+      
+    } catch (err) {
+        next(err)
+    }
+}
+
+export const updateUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const updatedUser = await userService.updateUser(
+            req.params.id,
+            req.body
+        )
+        res.status(200).send(updatedUser)
+    } catch (err) {
+        next(err)
+    }
+}
+export const loginUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { email, password } = req.body
+        const token = await userService.loginUser(email, password)
+        res.send({ accessToken: token })
     } catch (err) {
         next(err)
     }
