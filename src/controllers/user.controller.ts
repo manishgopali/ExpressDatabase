@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import * as userService from '../services/user.service'
-import HttpStatus from 'http-status-codes'
+//import HttpStatus from 'http-status-codes'
 // import { loginUser } from '../services/login.service'
 export const getUser = async (
     req: Request,
@@ -34,9 +34,8 @@ export const deleteUser = async (
     next: NextFunction
 ) => {
     try {
-       const deletedUser= await userService.deleteUser(req.params)
-       res.status(200).send(deletedUser)
-      
+        const deletedUser = await userService.deleteUser(req.params)
+        res.status(200).send(deletedUser)
     } catch (err) {
         next(err)
     }

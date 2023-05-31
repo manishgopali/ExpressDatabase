@@ -13,16 +13,24 @@ export const getUser = async (user: any) => {
 
 export const createUser = async (user: any) => {
     const { name, email, address, password } = user
-    return await prisma.user.create({
-        data: {
-            id: Math.ceil(Math.random() * 100),
-            name,
-            email,
-            address,
-            password: await bcrypt.hash(password as string, 10),
-        },
-        select: { id: true, address: true, name: true, email: true },
-    })
+    try {
+        return await prisma.user.create({
+            data: {
+                id: Math.ceil(Math.random() * 100),
+                name,
+                email,
+                address,
+                password: await bcrypt.hash(password as string, 10),
+            },
+            select: { id: true, address: true, name: true, email: true },
+        })
+    } catch (error: any) {
+        if (error.code === 'P2002') {
+            throw Boom.notFound('duplicate user detail')
+        } else {
+            throw error
+        }
+    }
 }
 export const deleteUser = async (user: any) => {
     const { id } = user
@@ -59,6 +67,9 @@ export const updateUser = async (id: string, user: any) => {
     } catch (error: any) {
         if (error.code === 'P2025') {
             throw Boom.notFound('user not found')
+        }
+        if (error.code === 'P2002') {
+            throw Boom.notAcceptable('duplicate email id')
         } else {
             throw error
         }
@@ -82,13 +93,9 @@ export async function loginUser(email: string, password: string) {
 
     //Generate a token
 
-    const token = jwt.sign(
-        { userId: user.id, isAdmin: true },
-        'random-secret',
-        {
-            expiresIn: '1h',
-        }
-    )
+    const token = jwt.sign({ userId: user.id }, 'random-secret', {
+        expiresIn: '1h',
+    })
 
     return token
 }
